@@ -76,10 +76,10 @@ module GoogleReaderToEvernote
       json = JSON.parse(@reader.feed_list(feed, continuation))
 
       json['items'].each do |item|
-        id = item['id']
-        href = item['alternate'][0]['href']
-        title = item['title']
-        crawltime = item['crawlTimeMsec']
+        id = item['id'] || ''
+        href = item['alternate'][0]['href'] || ''
+        title = item['title'] || ''
+        crawltime = item['crawlTimeMsec'] || ''
 
         if @first_item == true
           update_item id, feed
