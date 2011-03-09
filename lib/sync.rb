@@ -68,9 +68,8 @@ module GoogleReaderToEvernote
 
     def import(feed, tags = [], continuation = nil)
       if continuation == nil
-        @first_item = true
+        @latest_id = latest_id(feed)
       end
-      _latest_id = latest_id(feed)
 
       evernote = Appscript.app('evernote')
       json = JSON.parse(@reader.feed_list(feed, continuation))
@@ -81,12 +80,11 @@ module GoogleReaderToEvernote
         title = item['title'] || ''
         crawltime = item['crawlTimeMsec'] || ''
 
-        if @first_item == true
+        if continuation == nil
           update_item id, feed
-          @first_item = false
         end
 
-        return if id == _latest_id || crawltime.to_i < get_limit_time
+        return if id == @latest_id || crawltime.to_i < get_limit_time
 
         evernote.create_note(:title => title, :from_url => href, :tags => tags)
         puts "imported : #{title.delete("\n")}"
